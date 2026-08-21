@@ -1,0 +1,11 @@
+const express = require('express');
+const path = require('path');
+const app = express();
+app.use(express.json({limit:'10mb'}));
+app.use(express.static(path.join(__dirname,'public')));
+let writeoffs=[];
+app.get('/api/health',(req,res)=>res.json({ok:true,service:'Usadba 2.0'}));
+app.get('/api/writeoffs',(req,res)=>res.json(writeoffs));
+app.post('/api/writeoffs',(req,res)=>{const x={id:Date.now(),createdAt:new Date().toISOString(),...req.body};writeoffs.unshift(x);res.status(201).json(x)});
+app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
+const port=process.env.PORT||3000; app.listen(port,()=>console.log(`Usadba 2.0 on ${port}`));
